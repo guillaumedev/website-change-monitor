@@ -71,7 +71,12 @@ const intervalId = setInterval(function () {
                         .then(()=>{console.log("Alert Email Sent!");})
                         .catch((emailError)=>{console.log(emailError);});
 
-                    elementsToSearchFor = elementsToSearchFor+1
+                    const regex = /<span>(\d*)<\/span>/g;
+                    const found = body.match(regex)[0];
+                    found2 = found.replace(/<span>/,"");
+                    found3 = found2.replace(/<\/span>/,"");
+
+                    elementsToSearchFor = found3
                 }
 
             }
