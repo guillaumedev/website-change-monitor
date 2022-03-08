@@ -36,8 +36,6 @@ console.log("start")
 const intervalId = setInterval(function () {
 
     request(urlToCheck, function (err, response, body) {
-        console.log(elementsToSearchFor)
-        console.log("request")
         //if the request fail
         if (err) {
             console.log(`Request Error - ${err}`);
@@ -51,9 +49,7 @@ const intervalId = setInterval(function () {
             else {
 
                 //if any elementsToSearchFor exist
-                if (body.includes(elementsToSearchFor)) {
-                    console.log("Nothing changes");
-                } else {
+                if (!body.includes(elementsToSearchFor)) {
                     // Slack Alert Notification
                     slack.alert(`🔥🔥🔥  <${urlToCheck}/|Change detected in ${urlToCheck}>  🔥🔥🔥 `, function (err) {
                         if (err) {
