@@ -11,30 +11,33 @@ const PORT = process.env.PORT || 3000;
 
 
 //Main configuration variables
-const urlToCheck = `http://urlyouwant.com/tocheck`;
-const elementsToSearchFor = ['Text you want to watch for', 'imageYouWantToCheckItsExistence.png'];
-const checkingFrequency = 5 * 60000; //first number represent the checkingFrequency in minutes
+const urlToCheck = `XX`;
+var elementsToSearchFor = 13822;
+const checkingFrequency = 1 * 600; //first number represent the checkingFrequency in minutes
 
 //Slack Integration
-const SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX';
+const SLACK_WEBHOOK_URL = 'XX';
 const slack = require('slack-notify')(SLACK_WEBHOOK_URL);
 
 //SendGrid Email Integration
-const SENDGRID_APY_KEY = 'AA.AAAA_AAAAAAAAAAAAA.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+const SENDGRID_APY_KEY = 'XX';
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(SENDGRID_APY_KEY);
-const emailFrom = 'aaa@aaa.com';
-const emailsToAlert = ['emailOneToSend@theAlert.com', 'emailTwoToSend@theAlert.com'];
+const emailFrom = 'XX@XX.com';
+const emailsToAlert = 'xx@xx.com';
 
 
 const checkingNumberBeforeWorkingOKEmail = 1440 / (checkingFrequency / 60000);   //1 day = 1440 minutes
 let requestCounter = 0;
 
+console.log("start")
 
 //Main function
 const intervalId = setInterval(function () {
 
     request(urlToCheck, function (err, response, body) {
+        console.log(elementsToSearchFor)
+        console.log("request")
         //if the request fail
         if (err) {
             console.log(`Request Error - ${err}`);
@@ -48,8 +51,9 @@ const intervalId = setInterval(function () {
             else {
 
                 //if any elementsToSearchFor exist
-                if (elementsToSearchFor.some((el) => body.includes(el))) {
-
+                if (body.includes(elementsToSearchFor)) {
+                    console.log("Nothing changes");
+                } else {
                     // Slack Alert Notification
                     slack.alert(`🔥🔥🔥  <${urlToCheck}/|Change detected in ${urlToCheck}>  🔥🔥🔥 `, function (err) {
                         if (err) {
@@ -66,9 +70,12 @@ const intervalId = setInterval(function () {
                         subject: `🔥🔥🔥 Change detected in ${urlToCheck} 🔥🔥🔥`,
                         html: `Change detected in <a href="${urlToCheck}"> ${urlToCheck} </a>  `,
                     };
+                    console.log(msg)
                     sgMail.send(msg)
                         .then(()=>{console.log("Alert Email Sent!");})
                         .catch((emailError)=>{console.log(emailError);});
+
+                    elementsToSearchFor = elementsToSearchFor+1
                 }
 
             }
